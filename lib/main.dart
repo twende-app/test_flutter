@@ -36,6 +36,9 @@ class _RandomWordsState extends State<RandomWords> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Startup Name Generator'),
+        actions: [
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
     );
@@ -76,6 +79,42 @@ class _RandomWordsState extends State<RandomWords> {
           }
         });
       }
+    );
+  }
+
+  // adds a new page (route) that displays the favorites
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          final tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+
+          // add horizontal spacing between each ListTile
+          // 'divided' holds the final rows converted to a list by the
+          // convenience function, toList()
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(context: context, tiles: tiles).toList()
+              : <Widget>[];
+
+          // a Scaffold containing the app bar for the new route named SavedSuggestions
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            // a list view containing the list tile rows, each separated by a divider
+            body: ListView(children: divided),
+          );
+        },
+      ),
     );
   }
 }
