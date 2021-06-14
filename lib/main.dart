@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// implements part 1 of the tutorial at:
-// https://flutter.dev/docs/get-started/codelab#step-4-create-an-infinite-scrolling-listview
+// implements parts 1 & 2 of the tutorial at:
+// https://flutter.dev/docs/get-started/codelab#step-4-create-an-infinite-scrolling-listview and
+// https://codelabs.developers.google.com/codelabs/first-flutter-app-pt2
 
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
