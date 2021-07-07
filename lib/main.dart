@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:roam_flutter/roam_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +31,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
+  // MyHomePage({Key? key, required this.title}) : super(key: key); // null safe
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -46,16 +50,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _platformVersion = 'Unknown';
+  String myLocation = 'Unknown';
 
-  void _incrementCounter() {
+  //Native to Flutter Channel
+  static const platform = const MethodChannel("myChannel");
+
+  @override
+  void initState() {
+    platform.setMethodCallHandler(nativeMethodCallHandler); //Native to Flutter Channel
+    super.initState();
+    initPlatformState();
+    Roam.initialize(publishKey: "fa25768ae084485e91ca66dc8f6f40c55a216e51f1d57c3fc28ec10b5add82b3");
+  }
+
+  //Native to Flutter Channel
+  Future<dynamic> nativeMethodCallHandler(MethodCall methodCall) async {
+    switch (methodCall.method) {
+      case "location":
+        print(methodCall.arguments);
+        setState(() {
+          myLocation = methodCall.arguments;
+        });
+        break;
+      default:
+        return "Nothing";
+        break;
+    }
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    String platformVersion;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      platformVersion = await Roam.platformVersion;
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _platformVersion = platformVersion;
     });
   }
 
@@ -93,21 +133,43 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have clicked the button this many times:',
+            SelectableText('Running on: $_platformVersion\n'),
+            SelectableText(
+              'Received Location:\n $myLocation\n',
+              textAlign: TextAlign.center,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            ElevatedButton(
+                child: Text('Request Location Permissions'),
+                onPressed: () async {
+                  try {
+                    await Permission.locationAlways.request();
+                  } on PlatformException {
+                    print('Error getting location permissions');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Get Current Location'),
+                onPressed: () async {
+                  setState(() {
+                    myLocation = "fetching location..";
+                  });
+                  try {
+                    await Roam.getCurrentLocation(
+                      accuracy: 100,
+                      callBack: ({location}) {
+                        setState(() {
+                          myLocation = location;
+                        });
+                        print(location);
+                      },
+                    );
+                  } on PlatformException {
+                    print('Get Current Location Error');
+                  }
+                }),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
