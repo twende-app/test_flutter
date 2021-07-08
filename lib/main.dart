@@ -167,6 +167,54 @@ class _MyHomePageState extends State<MyHomePage> {
                     print('Get Current Location Error');
                   }
                 }),
+            ElevatedButton(
+                child: Text('Create User'),
+                onPressed: () async {
+                  try {
+                    await Roam.createUser(
+                        description: 'kip',
+                        callBack: ({user}) {
+                          print(user);
+                        });
+                  } on PlatformException {
+                    print('Create User Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Update Current Location'),
+                onPressed: () async {
+                  try {
+                    await Roam.updateCurrentLocation(accuracy: 100);
+                  } on PlatformException {
+                    print('Update Current Location Error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Start timed tracking'),
+                onPressed: () async {
+                  try {
+                    Map<String, dynamic> fitnessTracking = {
+                          "showsBackgroundLocationIndicator": true,
+                          "allowBackgroundLocationUpdates": true,
+                          "desiredAccuracy": "kCLLocationAccuracyBest",
+                          "timeInterval": 1
+                        };
+                    Roam.startTracking(
+                        trackingMode: "custom",
+                        customMethods: fitnessTracking);
+                  } on PlatformException {
+                    print('Start tracking error');
+                  }
+                }),
+            ElevatedButton(
+                child: Text('Stop tracking'),
+                onPressed: () async {
+                  try {
+                    await Roam.stopTracking();
+                  } on PlatformException {
+                    print('Stop tracking error');
+                  }
+                }),
           ],
         ),
       ),
