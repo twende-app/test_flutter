@@ -175,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         description: 'kip',
                         callBack: ({user}) {
                           print(user);
+                          //TODO: write a new record in firestore: /roam_users/user.data.id
                         });
                   } on PlatformException {
                     print('Create User Error');
