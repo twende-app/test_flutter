@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
   // MyHomePage({Key? key, required this.title}) : super(key: key); // null safe
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -75,13 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       default:
         return "Nothing";
-        break;
     }
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
+    String? platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = await Roam.platformVersion;
@@ -95,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _platformVersion = platformVersion!;
     });
   }
 
@@ -158,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       accuracy: 100,
                       callBack: ({location}) {
                         setState(() {
-                          myLocation = location;
+                          myLocation = location!;
                         });
                         print(location);
                       },
