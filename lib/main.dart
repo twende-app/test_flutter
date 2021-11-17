@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     platform.setMethodCallHandler(nativeMethodCallHandler); //Native to Flutter Channel
     super.initState();
     initPlatformState();
-    Roam.initialize(publishKey: "fa25768ae084485e91ca66dc8f6f40c55a216e51f1d57c3fc28ec10b5add82b3");
+    Roam.initialize(publishKey: "2baef3375364175971978b5f1c8999de521375af0e8099820886b7d1a94470fd");
   }
 
   //Native to Flutter Channel
