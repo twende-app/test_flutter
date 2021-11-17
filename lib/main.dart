@@ -62,6 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     initPlatformState();
     Roam.initialize(publishKey: "2baef3375364175971978b5f1c8999de521375af0e8099820886b7d1a94470fd");
+    Roam.toggleEvents(
+        location: true,
+        geofence: true,
+        trips: true,
+        movingGeofence: true,
+        callBack: ({user}) {
+          //Do something with user
+          print(">>>> event toggled for user " + user!);
+        });
   }
 
   //Native to Flutter Channel
@@ -176,6 +185,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           print(user);
                           //TODO: write a new record in firestore: /roam_users/user.data.id
                         });
+
+                        Roam.toggleEvents(
+                        location: true,
+                        geofence: true,
+                        trips: true,
+                        movingGeofence: true,
+                        callBack: ({user}) {
+                          //Do something with user
+                          print(">>>> event toggled for user " + user!);
+                        });
+
                   } on PlatformException {
                     print('Create User Error');
                   }
@@ -184,7 +204,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Update Current Location'),
                 onPressed: () async {
                   try {
-                    await Roam.updateCurrentLocation(accuracy: 100);
+                    var location = await Roam.updateCurrentLocation(accuracy: 100);
+                    print('Roam:::: update current location result: $location');
                   } on PlatformException {
                     print('Update Current Location Error');
                   }
